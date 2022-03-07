@@ -1,8 +1,10 @@
-let activeEffect
+import { extend } from '../shared'
 
+let activeEffect
 const targetMap = new WeakMap()
 class ReactiveEffect {
   private _fn: any
+  private scheduler?: () => void
   constructor(fn) {
     this._fn = fn
   }
@@ -13,8 +15,9 @@ class ReactiveEffect {
   }
 }
 
-export function effect(fn) {
+export function effect(fn, options = {}) {
   const _effect = new ReactiveEffect(fn)
+  extend(_effect, options)
   _effect.run()
 }
 
@@ -39,6 +42,7 @@ export function trigger(target, key) {
   const deps = depMap.get(key)
 
   for (const effect of deps) {
-    effect.run()
+    // effect.run()
+    effect.scheduler ? effect.scheduler() : effect.run()
   }
 }
