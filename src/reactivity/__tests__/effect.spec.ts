@@ -40,4 +40,21 @@ describe('effect', () => {
     expect(scheduler).toHaveBeenCalledTimes(2)
     expect(age).toBe(13)
   })
+
+  it('effect return runner', () => {
+    // effect 返回 fn 函数
+    let age = 0
+
+    const fn = jest.fn(() => {
+      age += 1
+      return 'result'
+    })
+    const runner = effect(fn)
+
+    expect(age).toBe(1)
+
+    const result = runner()
+    expect(age).toBe(2);
+    expect(result).toBe('result')
+  })
 })
