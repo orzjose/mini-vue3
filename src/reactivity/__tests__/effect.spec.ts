@@ -1,4 +1,4 @@
-import { effect } from '../effect'
+import { effect, stop } from '../effect'
 import { reactive } from '../reactive'
 
 describe('effect', () => {
@@ -54,7 +54,43 @@ describe('effect', () => {
     expect(age).toBe(1)
 
     const result = runner()
-    expect(age).toBe(2);
+    expect(age).toBe(2)
     expect(result).toBe('result')
+  })
+
+  it('effect stop', () => {
+    let dummy
+    const obj = reactive({ prop: 1 })
+    const runner = effect(() => {
+      dummy = obj.prop
+    })
+
+    obj.prop = 2
+    expect(dummy).toBe(2)
+    // 执行 stop(runner) 将 effect 内部响应式对象移除
+    stop(runner)
+
+    obj.prop = 3
+    expect(dummy).toBe(2)
+
+    runner()
+    expect(dummy).toBe(3)
+  })
+
+  it('effect onStop', () => {
+    // 当用户传入 onStop 时，调用 stop(runner) 会触发执行 onStop
+    let dummy
+    const obj = reactive({ prop: 1 })
+    const onStop = jest.fn(() => {})
+    const runner = effect(
+      () => {
+        dummy = obj.prop
+      },
+      { onStop }
+    )
+
+    expect(onStop).not.toHaveBeenCalled()
+    stop(runner)
+    expect(onStop).toBeCalledTimes(1)
   })
 })
