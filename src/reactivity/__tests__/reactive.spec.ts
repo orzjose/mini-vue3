@@ -13,4 +13,12 @@ describe('reactive', () => {
     const observed = reactive({ age: 1 })
     expect(isReactive(observed)).toBe(true)
   })
+
+  it('reactive embed', () => {
+    const observed = reactive({
+      foo: 1,
+      bar: { age: 10 }
+    })
+    expect(isReactive(observed.bar)).toBe(true)
+  })
 })

@@ -22,4 +22,12 @@ describe('readonly', () => {
     const origin = readonly({ age: 1 })
     expect(isReadonly(origin)).toBe(true)
   })
+
+  it('embed readonly', () => {
+    const origin = readonly({
+      foo: 1,
+      bar: { age: 10 }
+    })
+    expect(isReadonly(origin.bar)).toBe(true)
+  })
 })
