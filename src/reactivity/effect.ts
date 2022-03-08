@@ -1,6 +1,7 @@
 import { extend } from '../shared'
 
 let activeEffect
+let shouldTrack
 const targetMap = new WeakMap()
 class ReactiveEffect {
   private _fn: any
@@ -12,8 +13,15 @@ class ReactiveEffect {
     this._fn = fn
   }
   run() {
+    if (!this.active) {
+      return this._fn()
+    }
+    shouldTrack = true
     activeEffect = this
-    return this._fn()
+    const result = this._fn()
+    shouldTrack = false
+    return result
+    // return this._fn()
   }
   stop() {
     if (this.active) {
@@ -28,6 +36,7 @@ function cleanupEffect(effect) {
   effect.deps.forEach((dep) => {
     dep.delete(effect)
   })
+  effect.deps.length = 0
 }
 
 export function effect(fn, options = {}) {
@@ -41,6 +50,7 @@ export function effect(fn, options = {}) {
 }
 
 export function track(target, key) {
+  if (!isTracking()) return
   let depMap = targetMap.get(target)
   if (!depMap) {
     depMap = new Map()
@@ -52,10 +62,13 @@ export function track(target, key) {
     depMap.set(key, deps)
   }
 
-  if (!activeEffect) return
   if (deps.has(activeEffect)) return
   deps.add(activeEffect)
   activeEffect.deps.push(deps)
+}
+
+function isTracking() {
+  return shouldTrack && activeEffect !== undefined
 }
 
 export function trigger(target, key) {

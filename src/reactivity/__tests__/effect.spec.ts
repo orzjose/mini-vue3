@@ -70,7 +70,7 @@ describe('effect', () => {
     // 执行 stop(runner) 将 effect 内部响应式对象移除
     stop(runner)
 
-    obj.prop = 3
+    obj.prop++;
     expect(dummy).toBe(2)
 
     runner()
