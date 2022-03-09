@@ -1,4 +1,4 @@
-import { isReadonly, readonly } from '../reactive'
+import { isProxy, isReadonly, readonly } from '../reactive'
 
 describe('readonly', () => {
   it('happy path', () => {
@@ -29,5 +29,10 @@ describe('readonly', () => {
       bar: { age: 10 }
     })
     expect(isReadonly(origin.bar)).toBe(true)
+  })
+
+  it('isProxy', () => {
+    const origin = readonly({ age: 1 })
+    expect(isProxy(origin)).toBe(true)
   })
 })

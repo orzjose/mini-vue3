@@ -1,4 +1,4 @@
-import { isReadonly, shallowReadonly } from '../reactive'
+import { isProxy, isReadonly, shallowReadonly } from '../reactive'
 
 describe('shallowReadonly', () => {
   it('happy path', () => {
@@ -13,5 +13,10 @@ describe('shallowReadonly', () => {
     const wrapped = shallowReadonly({ foo: 1 })
     wrapped.foo = 2
     expect(console.warn).toHaveBeenCalled()
+  })
+  it('isProxy', () => {
+    const origin = shallowReadonly({ n: { foo: 1 } })
+    expect(isProxy(origin)).toBe(true)
+    expect(isProxy(origin.n)).toBe(false)
   })
 })
