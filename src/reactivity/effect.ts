@@ -3,14 +3,14 @@ import { extend } from '../shared'
 let activeEffect
 let shouldTrack
 const targetMap = new WeakMap()
-class ReactiveEffect {
+export class ReactiveEffect {
   private _fn: any
-  public scheduler?: () => void
   public onStop?: () => void
   active = true
   deps: [] = []
-  constructor(fn) {
+  constructor(fn, public scheduler?) {
     this._fn = fn
+    this.scheduler = scheduler
   }
   run() {
     if (!this.active) {
@@ -39,8 +39,8 @@ function cleanupEffect(effect) {
   effect.deps.length = 0
 }
 
-export function effect(fn, options = {}) {
-  const _effect = new ReactiveEffect(fn)
+export function effect(fn, options:any = {}) {
+  const _effect = new ReactiveEffect(fn, options.scheduler)
   extend(_effect, options)
   _effect.run()
 
