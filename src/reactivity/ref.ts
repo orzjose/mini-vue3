@@ -40,3 +40,22 @@ export function isRef(ref) {
 export function unRef(ref) {
   return isRef(ref) ? ref.value : ref
 }
+
+export function proxyRefs(objectWithRefs) {
+  return new Proxy(objectWithRefs, {
+    get(target, key) {
+      // 如果是 ref 对象， 返回 ref.value
+      // 不是 ref 对象，返回本身
+      return unRef(Reflect.get(target, key))
+    },
+    set(target, key, value) {
+      // 如果修改的对象是 ref 类型 && 传入的值不是 ref 类型，  将源对象 .value 替换
+      if (isRef(target[key]) && !isRef(value)) {
+        return Reflect.set(target[key], 'value', value)
+      } else {
+        // 如果修改的对象是 ref 类型 && 传入的对象也是ref 类型， 直接将对象替换掉
+        return Reflect.set(target, key, value)
+      }
+    }
+  })
+}

@@ -52,7 +52,7 @@ describe('ref', () => {
     expect(unRef(1)).toBe(1)
   })
 
-  it.skip('proxyRefs', () => {
+  it('proxyRefs', () => {
     const user = {
       age: ref(10),
       name: 'xiaohong'
