@@ -3,7 +3,7 @@ import { createVNode } from './vnode'
 
 export function createApp(rootComponent) {
   return {
-    mounted(rootContainer) {
+    mount(rootContainer) {
       // 先转换成 vnode
       const vnode = createVNode(rootComponent)
 
